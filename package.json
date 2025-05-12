@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "@types/chrome": "^0.0.320"
+  },
+  "name": "datu_strukturas_projekts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rmdir /s /q dist && mkdir dist && xcopy src dist /e /i /y"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ASomniphobeHere/datu_strukturas_projekts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ASomniphobeHere/datu_strukturas_projekts/issues"
+  },
+  "homepage": "https://github.com/ASomniphobeHere/datu_strukturas_projekts#readme",
+  "description": ""
+}

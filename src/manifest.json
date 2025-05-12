@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "My Chrome Extension",
+    "version": "1.0",
+    "description": "A simple Chrome extension.",
+    "permissions": [
+        "storage", 
+        "activeTab", 
+        "scripting",
+        "nativeMessaging",
+        "offscreen",
+        "bookmarks",
+        "tabs"
+    ],
+    "background": {
+      "service_worker": "js/background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["js/content.js"]
+      }
+    ],
+    "action": {
+      "default_popup": "html/popup.html"
+    }
+  }

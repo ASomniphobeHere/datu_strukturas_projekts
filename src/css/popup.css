@@ -1,0 +1,21 @@
+body {
+  width: 10rem;
+}
+
+.refresh-container {
+  display: flex;
+  justify-content: center;
+}
+
+.settings > input {
+  width: 30%;
+}
+
+.clear-todo {
+  border-radius: 5px;
+}
+
+/* .refresh-news {
+  width: 30px;
+  height: 30px;
+} */
