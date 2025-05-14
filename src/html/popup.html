@@ -4,17 +4,44 @@
     <body>
         <h3 style="text-align: center;">YCombinator news</h3>
         <div class="refresh-container">
-            <button class="refresh-news" id="refresh">Old text</button>
+            <button class="refresh-news" id="refresh">Add articles</button>
         </div>
-        <div class="settings">
-            <label for="number_of_articles">Number of articles</label>
-            <input type="text" name="number_of_articles" id="number_of_articles"/>
-            <label for="load_icons">Load icons?</label>
-            <input type="checkbox" name="load_icons" id="load_icons"/>
-        </div>
-        <br>
-        <div class="controls">
-            <button class="clear-todo" id="clear_todo">Clear ToDo</button>
+        <div id="settings">
+            <div>
+                <label for="number_of_articles">Number of articles</label>
+                <input type="text" name="number_of_articles" id="number_of_articles" class="text_input"/>
+            </div>
+            <div id="div_load_icons">
+                <label for="load_icons">Load icons?</label>
+                <input type="checkbox" name="load_icons" id="load_icons"/>
+            </div>
+            <div id="filter_settings">
+                <div id="filter_buttons">
+                    <button id="select_all">Select all</button>
+                    <button id="deselect_all">Deselect all</button>
+                </div>
+                <div id="filter_grid">
+                    <div class="filter_checkbox">
+                        <input type="checkbox" name="is_hiring" id="is_hiring">
+                        <label for="is_hiring">Is hiring</label>
+                    </div>
+                    <div class="filter_checkbox">
+                        <input type="checkbox" name="show_hn" id="show_hn">
+                        <label for="show_hn">Show HN</label>
+                    </div>
+                    <div class="filter_checkbox">
+                        <input type="checkbox" name="ask_hn" id="ask_hn">
+                        <label for="ask_hn">Ask HN</label>
+                    </div>
+                    <div class="filter_checkbox">
+                        <input type="checkbox" name="launch_hn" id="launch_hn">
+                        <label for="launch_hn">Launch HN</label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button id="clear_todo">Clear todo</button>
+            </div>
         </div>
     </body>
 </html>

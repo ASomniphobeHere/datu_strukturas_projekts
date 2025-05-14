@@ -1,3 +1,12 @@
+class SetCustom {
+    constructor() {
+
+    }
+    insert(object) {
+        
+    }
+}
+
 function sendMessage(message) {
     return new Promise((resolve, reject) => {
         chrome.runtime.sendMessage(message, (response) => {
@@ -118,17 +127,13 @@ async function getInProgressBookmarks() {
     return await getBookmarks(keys);
 }
 
-async function moveToInProgress(bookmark) {
-    console.log("moving");
-    const keys = ["in_progress_id"];
-    const storage_data = await chrome.storage.local.get(keys);
+async function moveToFolder(bookmark, folder) {
+    const folder_to_key = {"done": "done_id", "in_progress": "in_progress_id", "todo": "todo_id"};
+    const folder_key = folder_to_key[folder];
+    const storage_data = await chrome.storage.local.get(folder_key);
     
-    console.log("got storage");
-    const in_progress_folder_id = storage_data["in_progress_id"];
-    console.log(in_progress_folder_id);
-    chrome.bookmarks.move(bookmark.id, {index: 0, parentId: in_progress_folder_id}, () => {
-        console.log("finished moving");
-    });
+    const folder_id = storage_data[folder_key];
+    chrome.bookmarks.move(bookmark.id, {index: 0, parentId: folder_id});
 }
 
 function loadFavicons(urls) {
@@ -155,38 +160,39 @@ function loadFavicons(urls) {
 }
 
 async function refreshNews(message) {
+    console.log(message.data);
     let num_of_articles = message.data.number_of_articles || 10;
     let load_icons = message.data.load_icons ?? false;
+    let filter_is_hiring = message.data.is_hiring;
+    let filter_show_hn = message.data.show_hn;
+    let filter_ask_hn = message.data.ask_hn;
+    let filter_launch_hn = message.data.launch_hn;
     
-    console.log(num_of_articles);
     let article_array = await getArticleArray();
     let all_bookmarks = await getAllBookmarks();
-    console.log(article_array);
-    console.log(all_bookmarks);
     
     let article_set = new Set();
     for (let i = 0; i < all_bookmarks.length; i+=1) {
         article_set.add(all_bookmarks[i].url);
     }
-    console.log(article_set);
+
     let added_articles_count = 0;
     let added_articles_list = new Array();
     for (let i = 0; i < article_array.length; i+=1) {
         let article = article_array[i];
-        if (article.title.toLowerCase().includes("is hiring") && article.link.includes("ycombinator.com")) {
+        if (article.title.toLowerCase().includes("is hiring") && !filter_is_hiring) {
             continue;
         }
-        if (article.title.toLowerCase().includes("ask hn:")) {
+        if (article.title.toLowerCase().includes("ask hn:") && !filter_ask_hn) {
             continue;
         }
-        if (article.title.toLowerCase().includes("show hn:")) {
+        if (article.title.toLowerCase().includes("show hn:") && !filter_show_hn) {
             continue;
         }
-        if (article.title.toLowerCase().includes("launch hn:")) {
+        if (article.title.toLowerCase().includes("launch hn:") && !filter_launch_hn) {
             continue;
         }
         if (!article_set.has(article.link)) {
-            console.log(`Article added: ${article.title}`);
             added_articles_count += 1;
             added_articles_list.push(article);
             article_set.add(article.link);
@@ -197,7 +203,6 @@ async function refreshNews(message) {
     }
     chrome.storage.local.get('todo_id', (result) => {
         let parent_id = result['todo_id'];
-        console.log(`parent_id: ${parent_id}`);
         const urls = added_articles_list.map(article => {
             chrome.bookmarks.create({
                 title: article.title, 
@@ -205,13 +210,10 @@ async function refreshNews(message) {
                 parentId: parent_id});
                 return article.link;
         });
-        console.log(urls);
         if(load_icons) {
             loadFavicons(urls);
         }
     });
-    console.log("Added articles");
-    console.log(added_articles_list);
 }
 
 function clearTodo() {
@@ -223,6 +225,15 @@ function clearTodo() {
             });
         });
     });
+}
+
+async function doneReading(message) {
+    let in_progress_bookmarks = await getInProgressBookmarks();
+    const matching_in_progress = in_progress_bookmarks.find(bookmark => bookmark.url === message.data.url);
+
+    if(matching_in_progress) {
+        moveToFolder(matching_in_progress, "done");
+    }
 }
     
 // Establish initial setup - add bookmark folders and save ids in storage
@@ -239,6 +250,9 @@ chrome.runtime.onMessage.addListener(async (message) => {
     else if(message.command == "clearTodo") {
         clearTodo();
     }
+    else if(message.command == "doneReading") {
+        await doneReading(message);
+    }
 });
 
 // Inject content script in opened articles
@@ -246,21 +260,21 @@ chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
     let todo_bookmarks = await getTodoBookmarks();
     let in_progress_bookmarks = await getInProgressBookmarks();
     if (info.status == "complete") {
-        console.log(todo_bookmarks);
-        console.log(tab.url);
         const matching_todo = todo_bookmarks.find(bookmark => bookmark.url === tab.url);
-        console.log("checking matching todo");
-        console.log(`Result: ${matching_todo}`);
         if (matching_todo) {
-            moveToInProgress(matching_todo);
+            moveToFolder(matching_todo, "in_progress");
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ["js/content.js"]
+            });
         }
 
-        const matching_in_progress = in_progress_bookmarks.find(bookmark => bookmark.url === info.url);
+        const matching_in_progress = in_progress_bookmarks.find(bookmark => bookmark.url === tab.url);
         if (matching_in_progress) {
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 files: ["js/content.js"]
-            })
+            });
         }
     }
 });
