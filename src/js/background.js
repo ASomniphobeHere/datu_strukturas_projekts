@@ -1,11 +1,13 @@
-class SetCustom {
-    constructor() {
+// class SetCustom {
+//     constructor() {
+//         let int_array = new Array();
+//     }
+//     insert(object) {
 
-    }
-    insert(object) {
-        
-    }
-}
+//     }
+// }
+
+const faviconTabIds = new Set();
 
 function sendMessage(message) {
     return new Promise((resolve, reject) => {
@@ -142,10 +144,17 @@ function loadFavicons(urls) {
             active: false,
             url: url
         }, (tab) => {
+            faviconTabIds.add(tab.id);
+
             const listener = (tabId, info) => {
                 if (info.status == 'complete' && tabId == tab.id) {
-                    chrome.tabs.onUpdated.removeListener(listener);
-                    chrome.tabs.remove(tab.id);
+                    setTimeout(() => {
+                        if (chrome.tabs.onUpdated.hasListener(listener)) {
+                            chrome.tabs.onUpdated.removeListener(listener);
+                            chrome.tabs.remove(tab.id);
+                            faviconTabIds.delete(tab.id);
+                        }
+                    }, 1000);
                 }
             };
             chrome.tabs.onUpdated.addListener(listener);
@@ -153,6 +162,7 @@ function loadFavicons(urls) {
                 if (chrome.tabs.onUpdated.hasListener(listener)) {
                     chrome.tabs.onUpdated.removeListener(listener);
                     chrome.tabs.remove(tab.id);
+                    faviconTabIds.delete(tab.id);
                 }
             }, 10000);
         });
@@ -257,6 +267,9 @@ chrome.runtime.onMessage.addListener(async (message) => {
 
 // Inject content script in opened articles
 chrome.tabs.onUpdated.addListener(async (tabId, info, tab) => {
+    if(faviconTabIds.has(tabId)) {
+        return;
+    }
     let todo_bookmarks = await getTodoBookmarks();
     let in_progress_bookmarks = await getInProgressBookmarks();
     if (info.status == "complete") {
