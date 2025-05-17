@@ -1,11 +1,76 @@
-// class SetCustom {
-//     constructor() {
-//         let int_array = new Array();
-//     }
-//     insert(object) {
+class Node {
+    constructor(val) {
+        this.left = null;
+        this.right = null;
+        this.value = val;
+    }
+}
 
-//     }
-// }
+class SetCustom {
+    constructor() {
+        this.root = null;
+    }
+    insert(object) {
+        if (this.root === null) {
+            this.root = new Node(object);
+            return;
+        }
+        else {
+            let vert = this.root;
+            let parent = null;
+            while(vert !== null) {
+                parent = vert;
+                if(vert.value.localeCompare(object) > 0) {
+                    vert = vert.right;
+                } else {
+                    vert = vert.left;
+                }
+            }
+            vert = new Node(object);
+            if(parent.value.localeCompare(object) > 0) {
+                parent.right = vert;
+            } else {
+                parent.left = vert;
+            }
+        }
+    }
+    hasElement(object) {
+        if (this.root == null) {
+            return false;
+        }
+        let vert = this.root;
+        while(vert !== null && object != vert.value) {
+            if(vert.value.localeCompare(object) > 0) {
+                vert = vert.right;
+            } else {
+                vert = vert.left;
+            }
+        }
+        if (vert === null) {
+            return false;
+        }
+        return true;
+    }
+    remove(object) {
+        if (this.root == null) {
+            return;
+        }
+        let vert = this.root;
+        let parent = null;
+        while(vert !== null && object != vert.value) {
+            parent = null;
+            if(vert.value.localeCompare(object) > 0) {
+                vert = vert.right;
+            } else {
+                vert = vert.left;
+            }
+        }
+        if (vert === null) {
+            return;
+        }
+        
+    }
+}
 
 const faviconTabIds = new Set();
 
