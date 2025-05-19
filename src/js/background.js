@@ -1,12 +1,300 @@
-class Node {
-    constructor(val) {
+/*class Node {
+    constructor(value, parent) {
         this.left = null;
         this.right = null;
-        this.value = val;
+        this.value = value;
+        this.parent = parent;
+        this.color = 'red';
+    }
+    add_child(value, direction) {
+        let node = new Node(value, this);
+        this[direction] = node;
+        return node;
+    }
+    // If node is right of parent, return true
+    dir() { return (this.parent.right == this ? 'right' : 'left'); }
+}
+
+class RBTree {
+    constructor() {
+        this.root = null;
+    }
+    // false is left, true is right
+    rotate_subtree(sub_node, direction) {
+        let opposite = direction === 'left' ? 'right' : 'left';
+        
+        let sub_parent = sub_node.parent;
+        let new_root = sub_node[opposite];
+        let new_child = new_root[direction];
+        
+        
+        new_root[direction] = sub_node;
+        new_root.parent = sub_parent;
+        
+        if(new_child !== null) {
+            new_child.parent = sub_node;
+        }
+        
+        if(sub_parent === null) {
+            this.root = new_root;
+        }
+        else {
+            let dir = sub_node.dir();
+            sub_parent[dir] = new_root;
+        }
+        
+        sub_node[opposite] = new_child;
+        sub_node.parent = new_root;
+        
+    }
+    insert(value) {
+        if(this.root === null) {
+            this.root = new Node(value, null);
+            this.root.color = 'black';
+            return;
+        }
+        let iter_node = this.root;
+        let parent = null;
+        let direction = null;
+        while (iter_node != null) {
+            parent = iter_node;
+            if(parent.value > value) {
+                iter_node = parent.left;
+                direction = 'left';
+            } else if(parent.value < value) {
+                iter_node = parent.right;
+                direction = 'right';
+            }
+        }
+        let N = parent.add_child(value, direction);
+        while(true) {
+            let P = N.parent;
+            if(P === null) {
+                N.color = 'black';
+                return;
+            }
+            if(P.color == 'black') {
+                return;
+            }
+            let G = P.parent ?? null;
+            if(G == null) {
+                P.color = 'black';
+                return;
+            }
+            let dir = P.dir();
+            let opp = (dir === 'left' ? 'right' : 'left');
+            let U = G[opp];
+            if (U === null || U.color == 'black') {
+                if(N == P[opp]) {
+                    this.rotate_subtree(P, dir);
+                    N = P;
+                    P = G[dir];
+                }
+                this.rotate_subtree(G, opp);
+                G.color = 'red';
+                P.color = 'black';
+                return;
+            }
+            P.color = 'black';
+            U.color = 'black';
+            G.color = 'red';
+            N = G;
+        }
+    }
+    remove(value) {
+        if(this.root === null) {
+            return;
+        }
+        let node = this.root;
+        while(node != null && node.value != value) {
+            if(node.value > value) {
+                node = node.left;
+            } else {
+                node = node.right;
+            }
+        }
+        if(node === null) {
+            return;
+        }
+        if(node.left && node.right) {
+            let succ = node.right;
+            while(succ.left) {
+                succ = succ.left;
+            }
+            node.value = succ.value;
+            node = succ;
+        }
+        if((node.left && !node.right) || (!node.left && node.right)) {
+            let child = (node.right !== null ? node.right : node.left);
+            if(node.parent != null) {
+                node.parent[node.dir()] = child;
+                child.parent = node.parent;
+            }
+            else {
+                child.parent == null;
+                this.root = child;
+            }
+        }
+        if(!node.right && !node.left) {
+            if(node === this.root) {
+                this.root = null;
+                return;
+            }
+            if(node.color === 'red') {
+                node.parent[node.dir()] = null;
+                return;
+            }
+            if(node.color === 'black') {
+                let parent = node.parent;
+                let sibling = null;
+                let close_nephew = null;
+                let distant_nephew = null;
+                let dir = node.dir();
+                node.parent[dir] = null;
+                node = null;
+                while(true) {
+                    if(node) {
+                        dir = node.dir();
+                    }
+                    let opp = (dir==='right'?'left':'right');
+                    sibling = parent[opp];
+                    close_nephew = sibling[dir];
+                    distant_nephew = sibling[opp];
+                    if(sibling.color === 'red') {
+                        this.rotate_subtree(parent, dir);
+                        parent.color = 'red';
+                        sibling.color = 'black';
+                    }
+                }
+            }
+        }
+    }
+    hasElement(value) {
+        if(this.root === null) {
+            return false;
+        }
+        let node = this.root;
+        while(node != null && node.value != value) {
+            if(node.value > value) {
+                node = node.left;
+            } else {
+                node = node.right;
+            }
+        }
+        return (node !== null);
     }
 }
 
-class SetCustom {
+function printTree(node, indent = "", last = true) {
+    if (node !== null) {
+        console.log(indent + (last ? "└── " : "├── ") + node.value + (node.color == 'black' ? ' (B)' : ' (R)' ))
+        indent += last ? "    " : "│   ";
+        const children = [node.right, node.left];
+        const hasRight = node.right !== null;
+        const hasLeft = node.left !== null;
+        const count = (hasRight ? 1 : 0) + (hasLeft ? 1 : 0);
+        if (count === 0) return;
+        if (hasRight) printTree(node.right, indent, !hasLeft);
+        if (hasLeft) printTree(node.left, indent, true);
+    }
+}
+
+function verifyTreeVariants(node, prev_count = -1) {
+    if(node === null) {
+        return true;
+    }
+    if(node.parent && (node.parent.color === 'red' && node.color === 'red')) {
+        return false;
+    }
+    if(!node.left && !node.right) {
+        let c = countBlackNodesFromLeaf(node);
+        if(prev_count != -1 && prev_count != c) {
+            return false;
+        }
+    }
+    if(!verifyTreeVariants(node.left) || !verifyTreeVariants(node.right)) {
+        return false;
+    }
+    return true;
+}
+
+
+
+function countBlackNodesFromLeaf(leaf) {
+    let count = 0;
+    let node = leaf;
+    while(node !== null) {
+        count += (node.color == 'black' ? 1 : 0);
+        node = node.parent;
+    }
+    return count;
+}
+
+
+function verifyRBTree(root) {
+    let isValid = true;
+    let expectedBlackHeight = null;
+
+    function countBlackHeight(node, currentBlackCount) {
+        if (!isValid) return; // short-circuit if already invalid
+
+        if (node === null) {
+            // Reached a leaf/null child
+            if (expectedBlackHeight === null) {
+                expectedBlackHeight = currentBlackCount;
+            } else if (currentBlackCount !== expectedBlackHeight) {
+                console.error(`Black height mismatch: expected ${expectedBlackHeight}, but got ${currentBlackCount}`);
+                isValid = false;
+            }
+            return;
+        }
+
+        // Red node cannot have red children
+        if (node.color === 'red') {
+            if ((node.left && node.left.color === 'red') || (node.right && node.right.color === 'red')) {
+                console.error(`Red violation at node ${node.value}`);
+                isValid = false;
+            }
+        }
+
+        // Increment black count if this node is black
+        if (node.color === 'black') currentBlackCount++;
+
+        countBlackHeight(node.left, currentBlackCount);
+        countBlackHeight(node.right, currentBlackCount);
+    }
+
+    countBlackHeight(root, 0);
+    return isValid;
+}
+
+
+
+
+let tree = new RBTree();
+for(let i = 1; i <= 15; i+=1) {
+    tree.insert(i);
+}
+printTree(tree.root);
+console.log(verifyRBTree(tree.root));
+
+tree.remove(4);
+printTree(tree.root);
+console.log(verifyRBTree(tree.root));*/
+
+
+class Node {
+    constructor(val, parent) {
+        this.left = null;
+        this.right = null;
+        this.value = val;
+        this.parent = parent;
+        this.isBlack = true;
+    }
+    dir() { return this.parent.right == this; }
+}
+
+class RBTree {
     constructor() {
         this.root = null;
     }
