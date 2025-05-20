@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "@types/chrome": "^0.0.320"
+    "@types/chrome": "^0.0.320",
+    "webpack": "^5.99.8",
+    "webpack-cli": "^6.0.1"
   },
   "name": "datu_strukturas_projekts",
   "version": "1.0.0",
