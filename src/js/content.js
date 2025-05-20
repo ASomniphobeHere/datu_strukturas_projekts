@@ -1,4 +1,4 @@
-if (typeof(style) === "undefined") {
+if (typeof (style) === "undefined") {
     const style = document.createElement('style');
     style.textContent = `
 
@@ -85,7 +85,7 @@ if (typeof(style) === "undefined") {
     button.classList.add('glass_effect');
     button.addEventListener('click', (e) => {
         console.log(`url: ${window.location.href}`);
-        chrome.runtime.sendMessage({command: "doneReading", data: {url: window.location.href}});
+        chrome.runtime.sendMessage({ command: "doneReading", data: { url: window.location.href } });
         div.classList.add('doneReading');
     });
 
@@ -95,8 +95,8 @@ if (typeof(style) === "undefined") {
     span.innerHTML = '&#10003;';
     span.style.fontSize = '48px';
     span.style.fontWeight = '800';
-    
+
     button.appendChild(span);
-    
+
     document.body.appendChild(div);
 }
