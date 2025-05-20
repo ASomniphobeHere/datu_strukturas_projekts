@@ -39,7 +39,8 @@ Rakstu lasīšanas progress tiek pārvaldīts šādā veidā:
    ![alt text](assets/image-5.png)
 6. Paplašinājums tagad ir pieejams pārlūkprogrammā un gatavs izmantošanai.
    
-   ![alt text](assets/image-6.png)
+   ![alt text](assets/image-9.png)
+   ![alt text](assets/image-10.png)
 
 ## 📖 Lietošanas instrukcijas
 1. Atver paplašinājumu un izvēlies iestatījumus
