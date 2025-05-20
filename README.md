@@ -22,11 +22,24 @@ Rakstu lasīšanas progress tiek pārvaldīts šādā veidā:
 
 ## 📥 Instalācijas instrukcijas
 1. Klonē šo projektu:
-2. Atver Chrome pārlūkprogrammu un dodas uz "Extensions" sadaļu
-3. Lapas stūrī atzīmē "Developer Mode"
-4. Nospied "Load Unpacked", uznirošajā logā navigējas līdz 'datu_strukturas_projekts/src' mapei
+   
+   `git clone https://github.com/ASomniphobeHere/datu_strukturas_projekts.git`
+2. Atver Chrome pārlūkprogrammu un dodies uz "Extensions" sadaļu
+
+   ![Extensions lapa](assets/image.png)
+3. Lapas augšējā stūrī atzīmē "Developer Mode"
+   
+   ![alt text](assets/image-2.png)
+4. Nospied "Load Unpacked", uznirstošajā logā navigējas līdz 'datu_strukturas_projekts/src' mapei
+   
+   ![alt text](assets/image-3.png)
+   ![alt text](assets/image-4.png)
 5. Uzspied taustiņu kombināciju "Ctrl+Shift+B", lai parādītu grāmatzīmju joslu
+   
+   ![alt text](assets/image-5.png)
 6. Paplašinājums tagad ir pieejams pārlūkprogrammā un gatavs izmantošanai.
+   
+   ![alt text](assets/image-6.png)
 
 ## 📖 Lietošanas instrukcijas
 1. Atver paplašinājumu un izvēlies iestatījumus
